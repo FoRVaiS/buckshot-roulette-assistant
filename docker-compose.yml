@@ -1,0 +1,32 @@
+# ========================== VARIABLES ==========================
+x-frontend-args: &frontend-args
+  SCOPE: "@buckshot-roulette-assistant"
+  PROJECT: frontend
+  DOCKER_NODE_VERSION: 20.11.1-slim
+  DOCKER_UBUNTU_VERSION: jammy-20230624
+  DOCKER_NGINX_VERSION: 1.26.0
+
+services:
+# ========================== PRODUCTION ==========================
+  frontend-prod:
+    build:
+      dockerfile: ./docker/Dockerfile-web
+      target: production
+      args: *frontend-args
+    env_file: .env
+    ports:
+      - ${WEB_PORT}:${WEB_PORT}
+
+
+# ========================== DEVELOPMENT ==========================
+  frontend-dev:
+    build:
+      dockerfile: ./docker/Dockerfile-web
+      target: development
+      args: *frontend-args
+    env_file: .env
+    ports:
+      - ${WEB_PORT}:${WEB_PORT}
+    volumes:
+      - ./apps/frontend:/workspace/apps/frontend
+    restart: unless-stopped
